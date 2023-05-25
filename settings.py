@@ -1,49 +1,59 @@
 # Size
 APP_SIZE = (324,502)
-MAIN_ROWS = 9
+MAIN_ROWS = 11
 MAIN_COLS = 12
 
 # Text
 FONT = 'Helvetica'
 OUTPUT_FONT_SIZE = 48
 NORMAL_FONT_SIZE = 24
+MEMORY_FONT_SIZE = 12
 
 STYLING = {
     'gap': 0.5,
-    'corner-radius': 0
+    'corner-radius': 5
 }
 
 NUM_POSITIONS = {
-    '.': {'col': 7, 'row': 9, 'span': 3},
-    0: {'col': 4, 'row': 9, 'span': 3},
-    1: {'col': 1, 'row': 9, 'span': 3},
-    2: {'col': 4, 'row': 8, 'span': 3},
-    3: {'col': 7, 'row': 8, 'span': 3},
-    4: {'col': 1, 'row': 7, 'span': 3},
-    5: {'col': 4, 'row': 7, 'span': 3},
-    6: {'col': 7, 'row': 7, 'span': 3},
-    7: {'col': 1, 'row': 6, 'span': 3},
-    8: {'col': 4, 'row': 6, 'span': 3},
-    9: {'col': 7, 'row': 6, 'span': 3},
+    '.': {'col': 6, 'row': 10, 'columnspan': 3},
+    0: {'col': 3, 'row': 10, 'columnspan': 3},
+    1: {'col': 0, 'row': 9, 'columnspan': 3},
+    2: {'col': 3, 'row': 9, 'columnspan': 3},
+    3: {'col': 6, 'row': 9, 'columnspan': 3},
+    4: {'col': 0, 'row': 8, 'columnspan': 3},
+    5: {'col': 3, 'row': 8, 'columnspan': 3},
+    6: {'col': 6, 'row': 8, 'columnspan': 3},
+    7: {'col': 0, 'row': 7, 'columnspan': 3},
+    8: {'col': 3, 'row': 7, 'columnspan': 3},
+    9: {'col': 6, 'row': 7, 'columnspan': 3},
 }
 
 MATH_POSITIONS = {
-    '/': {'col': 10, 'row': 5, 'span': 3, 'character': '÷', 'operator': '/', 'image path': None},
-    '*': {'col': 10, 'row': 6, 'span': 3, 'character': 'x', 'operator': '*', 'image path': None},
-    '-': {'col': 10, 'row': 7, 'span': 3, 'character': '-', 'operator': '-', 'image path': None},
-    '=': {'col': 10, 'row': 9, 'span': 3, 'character': '=', 'operator': '=', 'image path': None},
-    '+': {'col': 10, 'row': 8, 'span': 3, 'character': '+', 'operator': '+', 'image path': None},
+    '/': {'col': 9, 'row': 6, 'columnspan': 3, 'character': '÷'},
+    '*': {'col': 9, 'row': 7, 'columnspan': 3, 'character': 'x'},
+    '-': {'col': 9, 'row': 8, 'columnspan': 3, 'character': '-'},
+    '=': {'col': 9, 'row': 10, 'columnspan': 3, 'character': '='},
+    '+': {'col': 9, 'row': 9, 'columnspan': 3, 'character': '+'},
+}
+
+MEM_POSITIONS = {
+    'MC': {'col': 0, 'row': 4, 'columnspan': 2, 'text': 'MC'},
+    'MR': {'col': 2, 'row': 4, 'columnspan': 2, 'text': 'MR'},
+    'M+': {'col': 4, 'row': 4, 'columnspan': 2, 'text': 'M+'},
+    'M-': {'col': 6, 'row': 4, 'columnspan': 2, 'text': 'M-'},
+    'MS': {'col': 8, 'row': 4, 'columnspan': 2, 'text': 'MS'},
+    'M': {'col': 10, 'row': 4, 'columnspan': 2, 'text': 'M'},
 }
 
 OPERATORS = {
-    'CE': {'col': 4, 'row': 4, 'span': 3, 'text': 'CE', 'image path': None},
-    'C': {'col': 7, 'row': 4, 'span': 3, 'text': 'C', 'image path': None},
-    'back': {'col': 10, 'row': 4, 'span': 3}, 'text': '«', 'image path': None,
-    'percent': {'col': 1, 'row': 4, 'span': 3, 'text': '%', 'image path': None},
-    'inverse': {'col': 1, 'row': 5, 'span': 3, 'text': '1/x', 'image path': None},
-    'x2': {'col': 4, 'row': 5, 'span': 3, 'text': 'x²', 'image path': None},
-    'square root': {'col': 7, 'row': 5, 'span': 3, 'text': '√', 'image path': None},
-    '+/-': {'col': 1, 'row': 9, 'span': 3, 'text': '±', 'image path': None}
+    'CE': {'col': 3, 'row': 5, 'columnspan': 3, 'text': 'CE'},
+    'C': {'col': 6, 'row': 5, 'columnspan': 3, 'text': 'C'},
+    'backspace': {'col': 9, 'row': 5, 'columnspan': 3, 'text': '«'},
+    'percent': {'col': 0, 'row': 5, 'columnspan': 3, 'text': '%'},
+    'inverse': {'col': 0, 'row': 6, 'columnspan': 3, 'text': '1/x'},
+    'x2': {'col': 3, 'row': 6, 'columnspan': 3, 'text': 'x²'},
+    'square root': {'col': 6, 'row': 6, 'columnspan': 3, 'text': '√'},
+    '+/-': {'col': 0, 'row': 10, 'columnspan': 3, 'text': '±'}
 }
 
 COLORS = {
