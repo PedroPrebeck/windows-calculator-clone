@@ -8,6 +8,7 @@ except:
     pass
 from ctypes import sizeof
 from mathparse import mathparse as parser
+from decimal import Decimal
 
 class CalculatorFrame(ctk.CTkFrame):
     def __init__(self, parent):
@@ -25,6 +26,7 @@ class CalculatorFrame(ctk.CTkFrame):
         self.display_nums = []
         self.full_operation = []
         self.last_operation = []
+        self.last_percent = 0
         
         self.create_widgets()
         
@@ -141,6 +143,7 @@ class CalculatorFrame(ctk.CTkFrame):
                    columnspan = data['columnspan'],)
 
     def num_press(self, value):
+        self.last_percent = 0
         if self.formula_string.get() and self.formula_string.get()[-1] == '=':
             self.clear_everything()
  
@@ -209,9 +212,68 @@ class CalculatorFrame(ctk.CTkFrame):
         self.formula_string.set('')
         self.display_nums.clear()
         self.full_operation.clear()
-
+        self.last_operation = ''
+        self.last_percent = 0
+        
+    # TODO: if the number is too small it will convert to scientific 
+    #       notation and the parser will not recognize it as a number
     def percent(self):
-        print('percent')
+        if self.full_operation:
+            print('aqui 1')
+            last_operator = self.full_operation[-1]
+            current_number = Decimal(''.join(self.display_nums))
+
+            if last_operator == '+' or last_operator == '-':
+                previous_number = Decimal(self.full_operation[-2])
+                percent_value = previous_number * current_number * Decimal('0.01')
+                decimal_percent_value = Decimal(str(percent_value))
+                if decimal_percent_value == decimal_percent_value.to_integral_value():
+                    percent_value = int(decimal_percent_value)
+                else:
+                    percent_value = decimal_percent_value
+                self.display_nums.clear()
+                self.display_nums.append(str(percent_value))
+                self.formula_string.set(' '.join(self.full_operation) + ' ' + ''.join(self.display_nums))
+            elif last_operator == '*' or last_operator == '/':
+                current_number = Decimal(''.join(self.display_nums))
+                percent_value = current_number * Decimal('0.01')
+                self.display_nums.clear()
+                self.display_nums.append(str(percent_value))
+                self.formula_string.set(' '.join(self.full_operation) + ' ' + ''.join(self.display_nums))
+        elif self.last_percent == 0:
+            current_number = Decimal(''.join(self.display_nums))
+            self.last_percent = current_number * Decimal('0.01')
+            percent_value = current_number * self.last_percent
+            percent_value = percent_value
+            digits_before_decimal = len(str(int(percent_value)))
+            round_to = 11 - digits_before_decimal
+            decimal_percent_value = Decimal(str(percent_value))
+            if decimal_percent_value == decimal_percent_value.to_integral_value():
+                percent_value = int(round(decimal_percent_value, max(round_to,0)))
+            else:
+                percent_value = round(percent_value, max(round_to,0)).normalize()
+            self.display_nums.clear()
+            self.display_nums.append(str(percent_value))
+            self.result_string.set(str(percent_value))
+            self.formula_string.set(str(percent_value))
+        else:
+            print('aqui 3')
+            current_number = Decimal(''.join(self.display_nums))
+            percent_value = Decimal(current_number * self.last_percent)
+            digits_before_decimal = len(str(int(percent_value)))
+            round_to = 11 - digits_before_decimal
+            digits_before_decimal = len(str(int(percent_value)))
+            round_to = 11 - digits_before_decimal
+            decimal_percent_value = Decimal(str(percent_value))
+            if decimal_percent_value == decimal_percent_value.to_integral_value():
+                percent_value = int(round(decimal_percent_value, max(round_to,0)))
+            else:
+                percent_value = round(percent_value, max(round_to,0)).normalize()
+            self.display_nums.clear()
+            self.display_nums.append(str(percent_value))
+            self.result_string.set(str(percent_value))
+            self.formula_string.set(str(percent_value))
+
 
     def backspace(self):
         print('backspace')
