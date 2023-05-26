@@ -227,6 +227,8 @@ class CalculatorFrame(ctk.CTkFrame):
     
     def inverted_signal(self):
         current_number = float(''.join(self.display_nums))
+        if current_number.is_integer():
+            current_number = int(current_number)
         if current_number:
             self.display_nums.clear()
             self.display_nums.append(str(current_number * -1))
