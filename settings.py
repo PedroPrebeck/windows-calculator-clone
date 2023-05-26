@@ -1,5 +1,5 @@
 # Size
-APP_SIZE = (320,470)
+APP_SIZE = (318,468)
 MAIN_ROWS = 11
 MAIN_COLS = 12
 
@@ -19,7 +19,7 @@ NUMBER_FONT_SIZE = 18
 MEMORY_FONT_SIZE = 12
 
 STYLING = {
-    'gap': 0.5,
+    'gap': 1,
     'corner-radius': 5
 }
 

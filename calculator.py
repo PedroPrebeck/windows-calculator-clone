@@ -8,33 +8,22 @@ except:
     pass
 from ctypes import sizeof
 
-class Calculator(ctk.CTk):
-    def __init__(self, is_dark):
+class CalculatorFrame(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent, fg_color = (WHITE, DARKGRAY))
         
-        super().__init__(fg_color = (WHITE, DARKGRAY))
-        ctk.set_appearance_mode(f'{"dark" if is_dark else "light"}')
-        self.geometry(f'{APP_SIZE[0]}x{APP_SIZE[1]}')
-        self.resizable(False, False)
-        self.title('Calculadora')
-        self.iconbitmap('empty.ico')
-
-        # grid layout
         self.rowconfigure(0, weight = 2, uniform = 'a')
         self.rowconfigure(1, weight = 1, uniform = 'a')
         self.rowconfigure(2, weight = 2, uniform = 'a')
         self.rowconfigure([3, 4], weight = 1, uniform ='a')
         self.rowconfigure(list(range(MAIN_ROWS)[5:]), weight = 2, uniform = 'a')
         self.columnconfigure(list(range(MAIN_COLS)), weight = 1, uniform = 'a')
-
-        # data
+        
         self.result_string = ctk.StringVar(value = '0')
         self.formula_string = ctk.StringVar(value = '')
-
-        # widgets
+        
         self.create_widgets()
-
-        self.mainloop()
-
+        
     def create_widgets(self):
         output_font = ctk.CTkFont(family = SEMIBOLD_FONT, size = OUTPUT_FONT_SIZE)
         formula_font = ctk.CTkFont(family = REGULAR_FONT, size = NORMAL_FONT_SIZE)
@@ -174,6 +163,20 @@ class Calculator(ctk.CTk):
     
     def inverted_signal(self):
         print('+/-')
+
+class Calculator(ctk.CTk):
+    def __init__(self, is_dark):
+        super().__init__(fg_color = (WHITE, DARKGRAY))
+        ctk.set_appearance_mode(f'{"dark" if is_dark else "light"}')
+        self.geometry(f'{APP_SIZE[0]}x{APP_SIZE[1]}')
+        self.resizable(False, False)
+        self.title('Calculadora')
+        self.iconbitmap('empty.ico')       
+       
+        calculator_frame = CalculatorFrame(self)
+        calculator_frame.pack(fill = 'both', expand = True, padx = 3, pady = 3)
+
+        self.mainloop()
 
 class OutputLabel(ctk.CTkLabel):
     def __init__(self, parent, row, anchor, font, string_var):
