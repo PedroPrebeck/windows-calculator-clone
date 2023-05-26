@@ -28,11 +28,11 @@ class NumButton(CTkButton):
         self.grid(column = col, row = row, sticky = 'NSEW', columnspan = columnspan, padx = STYLING['gap'], pady = STYLING['gap'])
 
 class MathButton(CTkButton):
-    def __init__(self, parent, text, func, col, row, font, columnspan, color = 'operator'):
+    def __init__(self, parent, text, operator, func, col, row, font, columnspan, color = 'operator'):
         super().__init__(
             master = parent,
             text = text,
-            command = lambda: func(text),
+            command = lambda: func(operator),
             corner_radius = STYLING['corner-radius'],
             font = font,
             fg_color = COLORS[color]['fg'],
