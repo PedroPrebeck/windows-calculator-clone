@@ -146,7 +146,7 @@ class CalculatorFrame(ctk.CTkFrame):
         self.last_percent = 0
         if self.formula_string.get() and self.formula_string.get()[-1] == '=':
             self.clear_everything()
- 
+            
         if self.display_nums == [] and self.full_operation == [] and value == 0:
             return
 
