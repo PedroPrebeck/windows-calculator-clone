@@ -21,12 +21,13 @@ class CalculatorFrame(ctk.CTkFrame):
         self.rowconfigure(list(range(MAIN_ROWS)[5:]), weight = 2, uniform = 'a')
         self.columnconfigure(list(range(MAIN_COLS)), weight = 1, uniform = 'a')
         
-        self.formula_string = ctk.StringVar(value = '')
-        self.result_string = ctk.StringVar(value = '0')
-        self.display_nums = []
+        self.formula_display = ctk.StringVar(value = '')
+        self.result_display = ctk.StringVar(value = '0')
+        self.current_number_digits = []
         self.full_operation = []
         self.last_operation = []
-        self.last_percent = 0
+        self.last_percent_number = 0
+        self.memory_numbers = []
         
         self.create_widgets()
         
@@ -40,8 +41,8 @@ class CalculatorFrame(ctk.CTkFrame):
         memory_font = ctk.CTkFont(family = REGULAR_FONT, size = MEMORY_FONT_SIZE)
         
         OutputLabel(self, 0, 'w', title_font, 'Standard', 'Standard')
-        OutputLabel(self, 1, 'se', formula_font, self.formula_string)
-        OutputLabel(self, 2, 'e', output_font, self.result_string)
+        OutputLabel(self, 1, 'se', formula_font, self.formula_display)
+        OutputLabel(self, 2, 'e', output_font, self.result_display)
 
         # percent
         Button(parent = self,
@@ -141,23 +142,23 @@ class CalculatorFrame(ctk.CTkFrame):
                    row = data['row'],
                    font = number_font,
                    columnspan = data['columnspan'],)
-
+    
     def num_press(self, value):
-        self.last_percent = 0
-        if self.formula_string.get() and self.formula_string.get()[-1] == '=':
+        self.last_percent_number = 0
+        if self.formula_display.get() and self.formula_display.get()[-1] == '=':
             self.clear_everything()
             
-        if self.display_nums == [] and self.full_operation == [] and value == 0:
+        if self.current_number_digits == [] and self.full_operation == [] and value == 0:
             return
 
-        if self.display_nums == ['undefined']:
-            self.display_nums.clear()
+        if self.current_number_digits == ['undefined']:
+            self.current_number_digits.clear()
             self.full_operation.clear()
 
-        if len(self.display_nums) < 11:
-            self.display_nums.append(str(value))
-            full_number = ''.join(self.display_nums)
-            self.result_string.set(full_number)
+        if len(self.current_number_digits) < 11:
+            self.current_number_digits.append(str(value))
+            full_number = ''.join(self.current_number_digits)
+            self.result_display.set(full_number)
 
     def math_press(self, value):
         def perform_sum():
@@ -171,20 +172,20 @@ class CalculatorFrame(ctk.CTkFrame):
                 round_to = 11 - digits_before_decimal
                 result = int(round(result, max(round_to,0))) if round(result, max(round_to,0)).is_integer() else round(result, max(round_to,0))
 
-            self.formula_string.set(formula + ' =')
-            self.result_string.set(result)
+            self.formula_display.set(formula + ' =')
+            self.result_display.set(result)
             self.last_operation = ' '.join(self.full_operation[-2:])
             self.full_operation.clear()
-            self.display_nums = [str(result)]
+            self.current_number_digits = [str(result)]
 
-        current_number = ''.join(self.display_nums)
+        current_number = ''.join(self.current_number_digits)
         if not current_number:
             return
         
         if value == '=' and self.full_operation == []:
             self.full_operation.append(current_number)
             self.full_operation.extend(self.last_operation.split()[-2:])
-            self.formula_string.set(' '.join(self.full_operation))
+            self.formula_display.set(' '.join(self.full_operation))
             perform_sum()
             return
 
@@ -192,8 +193,8 @@ class CalculatorFrame(ctk.CTkFrame):
 
         if value != '=' or not self.full_operation:
             self.full_operation.append(value)
-            self.display_nums.clear()
-            self.formula_string.set(' '.join(self.full_operation))
+            self.current_number_digits.clear()
+            self.formula_display.set(' '.join(self.full_operation))
         else:
             perform_sum()
     
@@ -204,16 +205,16 @@ class CalculatorFrame(ctk.CTkFrame):
         if self.full_operation == []:
             self.clear_everything()
             return
-        self.result_string.set(0)
-        self.display_nums.clear()
+        self.result_display.set(0)
+        self.current_number_digits.clear()
 
     def clear_everything(self):
-        self.result_string.set(0)
-        self.formula_string.set('')
-        self.display_nums.clear()
+        self.result_display.set(0)
+        self.formula_display.set('')
+        self.current_number_digits.clear()
         self.full_operation.clear()
         self.last_operation = ''
-        self.last_percent = 0
+        self.last_percent_number = 0
         
     # TODO: if the number is too small it will convert to scientific 
     #       notation and the parser will not recognize it as a number
@@ -221,7 +222,7 @@ class CalculatorFrame(ctk.CTkFrame):
         if self.full_operation:
             print('aqui 1')
             last_operator = self.full_operation[-1]
-            current_number = Decimal(''.join(self.display_nums))
+            current_number = Decimal(''.join(self.current_number_digits))
 
             if last_operator == '+' or last_operator == '-':
                 previous_number = Decimal(self.full_operation[-2])
@@ -231,19 +232,19 @@ class CalculatorFrame(ctk.CTkFrame):
                     percent_value = int(decimal_percent_value)
                 else:
                     percent_value = decimal_percent_value
-                self.display_nums.clear()
-                self.display_nums.append(str(percent_value))
-                self.formula_string.set(' '.join(self.full_operation) + ' ' + ''.join(self.display_nums))
+                self.current_number_digits.clear()
+                self.current_number_digits.append(str(percent_value))
+                self.formula_display.set(' '.join(self.full_operation) + ' ' + ''.join(self.current_number_digits))
             elif last_operator == '*' or last_operator == '/':
-                current_number = Decimal(''.join(self.display_nums))
+                current_number = Decimal(''.join(self.current_number_digits))
                 percent_value = current_number * Decimal('0.01')
-                self.display_nums.clear()
-                self.display_nums.append(str(percent_value))
-                self.formula_string.set(' '.join(self.full_operation) + ' ' + ''.join(self.display_nums))
-        elif self.last_percent == 0:
-            current_number = Decimal(''.join(self.display_nums))
-            self.last_percent = current_number * Decimal('0.01')
-            percent_value = current_number * self.last_percent
+                self.current_number_digits.clear()
+                self.current_number_digits.append(str(percent_value))
+                self.formula_display.set(' '.join(self.full_operation) + ' ' + ''.join(self.current_number_digits))
+        elif self.last_percent_number == 0:
+            current_number = Decimal(''.join(self.current_number_digits))
+            self.last_percent_number = current_number * Decimal('0.01')
+            percent_value = current_number * self.last_percent_number
             percent_value = percent_value
             digits_before_decimal = len(str(int(percent_value)))
             round_to = 11 - digits_before_decimal
@@ -252,14 +253,14 @@ class CalculatorFrame(ctk.CTkFrame):
                 percent_value = int(round(decimal_percent_value, max(round_to,0)))
             else:
                 percent_value = round(percent_value, max(round_to,0)).normalize()
-            self.display_nums.clear()
-            self.display_nums.append(str(percent_value))
-            self.result_string.set(str(percent_value))
-            self.formula_string.set(str(percent_value))
+            self.current_number_digits.clear()
+            self.current_number_digits.append(str(percent_value))
+            self.result_display.set(str(percent_value))
+            self.formula_display.set(str(percent_value))
         else:
             print('aqui 3')
-            current_number = Decimal(''.join(self.display_nums))
-            percent_value = Decimal(current_number * self.last_percent)
+            current_number = Decimal(''.join(self.current_number_digits))
+            percent_value = Decimal(current_number * self.last_percent_number)
             digits_before_decimal = len(str(int(percent_value)))
             round_to = 11 - digits_before_decimal
             digits_before_decimal = len(str(int(percent_value)))
@@ -269,10 +270,10 @@ class CalculatorFrame(ctk.CTkFrame):
                 percent_value = int(round(decimal_percent_value, max(round_to,0)))
             else:
                 percent_value = round(percent_value, max(round_to,0)).normalize()
-            self.display_nums.clear()
-            self.display_nums.append(str(percent_value))
-            self.result_string.set(str(percent_value))
-            self.formula_string.set(str(percent_value))
+            self.current_number_digits.clear()
+            self.current_number_digits.append(str(percent_value))
+            self.result_display.set(str(percent_value))
+            self.formula_display.set(str(percent_value))
 
 
     def backspace(self):
@@ -288,13 +289,13 @@ class CalculatorFrame(ctk.CTkFrame):
         print('square root')
     
     def inverted_signal(self):
-        current_number = float(''.join(self.display_nums))
+        current_number = float(''.join(self.current_number_digits))
         if current_number.is_integer():
             current_number = int(current_number)
         if current_number:
-            self.display_nums.clear()
-            self.display_nums.append(str(current_number * -1))
-            self.result_string.set(''.join(self.display_nums))
+            self.current_number_digits.clear()
+            self.current_number_digits.append(str(current_number * -1))
+            self.result_display.set(''.join(self.current_number_digits))
 
 class Calculator(ctk.CTk):
     def __init__(self, is_dark):
@@ -304,7 +305,7 @@ class Calculator(ctk.CTk):
         self.resizable(False, False)
         self.title('Calculadora')
         self.iconbitmap('empty.ico')       
-       
+
         calculator_frame = CalculatorFrame(self)
         calculator_frame.pack(fill = 'both', expand = True, padx = 3, pady = 3)
 
