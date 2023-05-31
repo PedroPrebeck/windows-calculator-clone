@@ -199,43 +199,27 @@ class CalculatorFrame(ctk.CTkFrame):
         if VALUE_IS_DECIMAL and CURRENT_NUMBER_IS_DECIMAL:
             return
 
-        #print(f'num press {value}')
         self.current_number_digits.append(str(value))
-        #print(f'current_number_digits {self.current_number_digits}')
         self.current_number = ''.join(self.current_number_digits)
-        print(type(self.current_number))
-        #print(f'current_number {self.current_number}')
 
         current_number_formatted = self.format_number(self.current_number)
-        #print(f'current_number_formated {current_number_formatted}')
 
         self.result_display.set(current_number_formatted)
-        #print(f'result_display {self.result_display.get()}')
 
     def math_press(self, value):
-        print(f'math press {value}')
         current_number = ''.join(self.current_number_digits)
 
         if not self.first_number:
             self.first_number = current_number if current_number else self.result_display.get()
-            print(f'first_number {self.first_number}')
             self.full_operation.append(self.first_number)
             self.full_operation.append(value)
-            print(f'full_operation {self.full_operation}')
             self.formula_display.set(' '.join(self.full_operation))
-            print(f'formula_display: {self.formula_display.get()}')
             self.current_number_digits = []
-            print(f'current_number_digits {self.current_number_digits}')
         else:
             self.second_number = current_number
-            print(f'second_number {self.second_number}')
             self.full_operation.append(self.second_number)
-            print(f'full_operation {self.full_operation}')
             formula = ' '.join(self.full_operation)
-            print(f'formula {formula}')
             self.result = mp(formula)
-            print(f'result {self.result}')
-            print(f'formula_result {self.result}')
 
             if value == '=':
                 self.formula_display.set(formula + ' =')
