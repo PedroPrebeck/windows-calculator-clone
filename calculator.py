@@ -7,8 +7,8 @@ try:
 except:
     pass
 from ctypes import sizeof
-from mathparse import mathparse as parser
 from decimal import Decimal
+from mathparser import mathparser as mp
 
 class CalculatorFrame(ctk.CTkFrame):
     def __init__(self, parent):
@@ -25,6 +25,7 @@ class CalculatorFrame(ctk.CTkFrame):
         self.result_display = ctk.StringVar(value = '0')
 
         self.current_number_digits = ['0']
+        self.current_number = ''
         self.first_number = ''
         self.second_number = ''
         self.result = ''
@@ -163,6 +164,20 @@ class CalculatorFrame(ctk.CTkFrame):
                    font = number_font,
                    columnspan = data['columnspan'],)
 
+
+
+    def format_number(self, number):
+        MAX_DIGIT_LENGTH = self.digits_limit
+
+        if '.' in number:
+            integer_part, decimal_part = number.split('.')
+            integer_part_formatted = "{:,}".format(int(integer_part))
+            current_number_formatted = f"{integer_part_formatted}.{decimal_part[:MAX_DIGIT_LENGTH - len(integer_part_formatted.replace(',', ''))]}"
+        else:
+            current_number_formatted = "{:,}".format(int(number))
+
+        return current_number_formatted
+    
     def num_press(self, value):
         MAX_DIGIT_LENGTH = self.digits_limit
         CURRENT_NUMBER_IS_MAX_LENGHT = sum(1 for digit in self.current_number_digits if digit != '.') == MAX_DIGIT_LENGTH
@@ -187,16 +202,11 @@ class CalculatorFrame(ctk.CTkFrame):
         #print(f'num press {value}')
         self.current_number_digits.append(str(value))
         #print(f'current_number_digits {self.current_number_digits}')
-        current_number = ''.join(self.current_number_digits)
-        #print(f'current_number {current_number}')
+        self.current_number = ''.join(self.current_number_digits)
+        print(type(self.current_number))
+        #print(f'current_number {self.current_number}')
 
-        if '.' in current_number:
-            integer_part, decimal_part = current_number.split('.')
-            integer_part_formatted = "{:,}".format(int(integer_part))
-            #print(f'integer_part_formatted {integer_part_formatted}')
-            current_number_formatted = f"{integer_part_formatted}.{decimal_part[:MAX_DIGIT_LENGTH - len(integer_part_formatted.replace(',', ''))]}"
-        else:
-            current_number_formatted = "{:,}".format(int(current_number))
+        current_number_formatted = self.format_number(self.current_number)
         #print(f'current_number_formated {current_number_formatted}')
 
         self.result_display.set(current_number_formatted)
@@ -205,8 +215,9 @@ class CalculatorFrame(ctk.CTkFrame):
     def math_press(self, value):
         print(f'math press {value}')
         current_number = ''.join(self.current_number_digits)
+
         if not self.first_number:
-            self.first_number = current_number
+            self.first_number = current_number if current_number else self.result_display.get()
             print(f'first_number {self.first_number}')
             self.full_operation.append(self.first_number)
             self.full_operation.append(value)
@@ -222,24 +233,22 @@ class CalculatorFrame(ctk.CTkFrame):
             print(f'full_operation {self.full_operation}')
             formula = ' '.join(self.full_operation)
             print(f'formula {formula}')
-            result = Decimal(str(parser.parse(formula)))
-            self.result = result
+            self.result = mp(formula)
+            print(f'result {self.result}')
             print(f'formula_result {self.result}')
+
             if value == '=':
                 self.formula_display.set(formula + ' =')
                 self.result_display.set(self.result)
             else:
                 self.formula_display.set(f'{self.result} {value}')
                 self.result_display.set(self.result)
+
             self.last_operation = ' '.join(self.full_operation[-2:])
             self.full_operation.clear()
             self.current_number_digits.clear()
             self.first_number = None
             self.result = None
-
-
-
-
 
     def percent(self):
         print('percent')
