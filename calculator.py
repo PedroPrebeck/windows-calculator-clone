@@ -164,8 +164,6 @@ class CalculatorFrame(ctk.CTkFrame):
                    font = number_font,
                    columnspan = data['columnspan'],)
 
-
-
     def format_number(self, number):
         MAX_DIGIT_LENGTH = self.digits_limit
 
@@ -219,20 +217,29 @@ class CalculatorFrame(ctk.CTkFrame):
             self.second_number = current_number
             self.full_operation.append(self.second_number)
             formula = ' '.join(self.full_operation)
-            self.result = mp(formula)
+            self.full_operation.clear()
 
             if value == '=':
+                if not self.second_number:
+                    self.full_operation.append(self.last_operation)
+                    formula = ' '.join(self.full_operation)
+
+                self.result = mp(formula)
+                self.full_operation.clear()
+                self.current_number_digits.clear()
+                self.first_number = None
+
                 self.formula_display.set(formula + ' =')
                 self.result_display.set(self.result)
             else:
-                self.formula_display.set(f'{self.result} {value}')
-                self.result_display.set(self.result)
+                self.full_operation.append(formula)
+                self.full_operation.append(value)
+                self.last_operation = ' '.join(self.full_operation[-2:])
+                self.current_number_digits.clear()
 
-            self.last_operation = ' '.join(self.full_operation[-2:])
-            self.full_operation.clear()
-            self.current_number_digits.clear()
-            self.first_number = None
-            self.result = None
+                self.formula_display.set(' '.join(self.full_operation))
+                self.result_display.set(current_number)
+
 
     def percent(self):
         print('percent')
